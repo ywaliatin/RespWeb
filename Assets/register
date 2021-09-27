@@ -1,0 +1,45 @@
+<template>
+  <h3>Please register here.</h3>
+  <Form buttonlabel="Sign Up" @onsubmit="register" />
+</template>
+<script>
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import Form from "@/components/Form.vue";
+export default {
+  name: "SignupForm",
+  components: {
+    Form,
+  },
+
+  methods: {
+    register: function (userdetails) {
+      const auth = getAuth();
+      createUserWithEmailAndPassword(
+        auth,
+        userdetails.email,
+        userdetails.password
+      )
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          this.$router.replace("/dashboard");
+          console.log(user);
+        })
+        .catch((error) => {
+          console.log(error);
+          // ..
+        });
+      alert(
+        "Submitted! Please email us to bp@bubsplaydate.com for registering your babies."
+      );
+    },
+  },
+};
+</script>
+<style scoped>
+.btn-vue {
+  background: #53b985;
+  color: #31485d;
+  font-weight: bold;
+}
+</style>
