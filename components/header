@@ -1,0 +1,134 @@
+<template>
+  <nav id="hamnav">
+    <!--(B) the hamburger-->
+
+    <!-- (C) Menu items-->
+    <div id="hamitems" :class="{ shownavbar: show }">
+      <div id="nav">
+        <router-link to="/">Home</router-link> |
+        <router-link to="/Registerr" v-if="!isloggedin">Register |</router-link>
+        <router-link to="/login" v-if="!isloggedin">Login |</router-link>
+        <router-link to="/babies">Babies</router-link> |
+        <router-link to="/about">About</router-link> |
+        <Logout v-if="isloggedin" />
+      </div>
+    </div>
+
+    <div class="hamburger-logo">
+      <button id="hamburger" @click="showNavbar">
+        <div class="lines"></div>
+        <div class="lines"></div>
+        <div class="lines"></div>
+      </button>
+    </div>
+  </nav>
+  <img src="@/assets/Bublogo.png" class="logo" alt="" />
+</template>
+
+<script>
+import Logout from "./Logout.vue";
+export default {
+  props: {
+    isloggedin: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  components: {
+    Logout,
+  },
+  data() {
+    return {
+      show: false,
+    };
+  },
+  methods: {
+    showNavbar: function () {
+      this.show = !this.show;
+    },
+  },
+};
+</script>
+
+<style scoped>
+/* [on big screen] */
+/* (A) wrapper */
+.logo {
+  max-width: 300px;
+  max-height: 300px;
+  float: center;
+  /* object-fit: cover; */
+}
+#hamnav {
+  width: 100%;
+  background: #8191ad;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* (B) horizontal menu items */
+#hamitems {
+  display: flex;
+}
+#hamitems a {
+  flex-grow: 1;
+  flex-basis: 0;
+  padding: 10px;
+  color: white;
+  text-decoration: none;
+  text-align: center;
+}
+
+#hamitems a :hover {
+  background: #401408;
+}
+
+/* (C) hide hamburger */
+#hamnav label,
+#hamburger {
+  display: none;
+}
+
+/* [on small screen] */
+@media screen and (max-width: 769px) {
+  /* (A) break into vertical menu */
+  #hamnav {
+    flex-direction: column-reverse;
+  }
+  .hamburger-logo {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  #hamitems {
+    box-sizing: border-box;
+    display: none;
+    width: 100%;
+    border-top: 1px solid #333;
+  }
+
+  /* (B) show hamburger icon */
+  #hamburger {
+    display: inline-block;
+    color: white;
+    background: #4caf50;
+    font-style: normal;
+    font-size: 1.2em;
+    padding: 10px;
+  }
+
+  /* (C) toggle show/hide menu */
+
+  .shownavbar {
+    display: block !important;
+  }
+  .lines {
+    width: 30px;
+    height: 5px;
+    margin-top: 5px;
+    background: white;
+  }
+}
+</style>
