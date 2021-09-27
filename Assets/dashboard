@@ -1,0 +1,139 @@
+<template>
+  <div>
+    <transition class="animate">
+      <h1>This is your dashboard</h1>
+    </transition>
+    <Form
+      buttonlabel="Update Profile"
+      :showprofilefields="true"
+      @onsubmit="updateProfile"
+      :profilefields="user"
+    />
+    <!--this renders forms in list without ul tag but with css of list  -->
+    <BabyProfile v-for="(item, index) in babies" :key="index" :baby="item" />
+  </div>
+</template>
+<script>
+import Form from "@/components/Form.vue";
+import BabyProfile from "@/components/BabyProfile.vue";
+import {
+  collection,
+  getDocs,
+  getFirestore,
+  addDoc,
+  updateDoc,
+  doc,
+} from "firebase/firestore";
+
+export default {
+  components: {
+    Form,
+    BabyProfile,
+  },
+  data() {
+    return {
+      user: {},
+      db: null,
+      docID: "",
+      babies: [],
+    };
+  },
+  computed: {
+    userAuth() {
+      return this.$store.getters.getUser;
+    },
+  },
+  mounted() {
+    this.getUser();
+  },
+  methods: {
+    updateProfile: async function (userDetails) {
+      if (this.user.uid) {
+        const docRef = doc(this.db, "parent", this.docID);
+
+        // Set the "capital" field of the city 'DC'
+        await updateDoc(docRef, {
+          firstname: userDetails.firstname,
+          lastname: userDetails.lastname,
+          phone: userDetails.phone,
+        });
+        alert("profile updated successfully");
+      } else {
+        try {
+          const docRef = await addDoc(collection(this.db, "parent"), {
+            firstname: userDetails.firstname,
+            lastname: userDetails.lastname,
+            phone: userDetails.phone,
+            uid: this.userAuth.uid,
+          });
+          alert(
+            "Updated! Please email us to bp@bubsplaydate.com for registering your babies."
+          );
+          console.log("Document written with ID: ", docRef.id);
+        } catch (e) {
+          console.error("Error adding document: ", e);
+          alert(
+            "There was some problem in registration, refresh the page and try again"
+          );
+        }
+      }
+    },
+    getUser: function () {
+      setTimeout(async () => {
+        let uid = this.userAuth.uid;
+        console.log(uid);
+        this.db = getFirestore();
+
+        const querySnapshot = await getDocs(collection(this.db, "parent"));
+        querySnapshot.forEach((doc) => {
+          if (doc.data().uid == uid) {
+            this.user = doc.data();
+            this.docID = doc.id;
+          }
+          console.log("User found", this.user);
+          // console.log(`${doc.id} => ${doc.data()}`);
+        });
+
+        this.getBabies();
+      }, 1500);
+    },
+
+    async getBabies() {
+      this.db = getFirestore();
+
+      const querySnapShot = await getDocs(collection(this.db, "babies"));
+
+      querySnapShot.forEach((doc) => {
+        if (doc.data().parent_uid == this.userAuth.uid) {
+          var obj = {
+            name: doc.data().name,
+            age: doc.data().age,
+            gender: doc.data().gender,
+            postcode: doc.data().postcode,
+            suburb: doc.data().suburb,
+            available_day: doc.data().available_day,
+            available_time: doc.data().available_time,
+            id: doc.id,
+          };
+          this.babies.push(obj);
+        }
+      });
+    },
+  },
+};
+</script>
+
+<style scoped>
+.animate-enter-from {
+  opacity: 0;
+}
+.animate-enter-to {
+  opacity: 0;
+}
+.animate-enter-active {
+  transition: opacity 2s ease;
+}
+.animate-leave-active {
+  transition: opacity 2s ease;
+}
+</style>
