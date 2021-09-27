@@ -1,0 +1,12 @@
+const basic = {
+  mounted() {
+    console.log("This is Ass3 Mixins");
+  },
+  methods: {
+    onPress() {
+      console.log("Bp@bubsplaydate.com");
+    },
+  },
+};
+
+export default basic;
