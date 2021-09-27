@@ -1,0 +1,59 @@
+<template>
+  <div class="login-container">
+    <Form buttonlabel="Sign In" @onsubmit="login" />
+    <router-link to="/Registerr" class="register-button">Sign Up </router-link>
+  </div>
+</template>
+<script>
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import Form from "@/components/Form.vue";
+export default {
+  name: "SignupForm",
+  components: {
+    Form,
+  },
+
+  methods: {
+    login: function (userdetails) {
+      const auth = getAuth();
+      signInWithEmailAndPassword(auth, userdetails.email, userdetails.password)
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          this.$router.replace("/dashboard");
+          console.log(user);
+        })
+        .catch((error) => {
+          console.log(error);
+          // ..
+        });
+      alert("Data Submit");
+    },
+  },
+};
+</script>
+<style scoped>
+.btn-vue {
+  background: #53b985;
+  color: #31485d;
+  font-weight: bold;
+  width: 200px;
+  padding: 0.4%;
+}
+.login-container {
+  position: relative;
+  margin-top: 10vh;
+}
+.register-button {
+  position: absolute;
+  top: 65%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-decoration: none;
+  width: 100px;
+  background: rgb(233, 233, 63);
+  color: white;
+  padding: 0.3%;
+  color: #31485d;
+}
+</style>
