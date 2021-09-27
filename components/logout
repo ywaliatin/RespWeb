@@ -1,0 +1,18 @@
+<template>
+  <button @click="logout">Logout</button>
+</template>
+
+<script>
+import { getAuth, signOut } from "firebase/auth";
+export default {
+  name: "Logout",
+  methods: {
+    logout: function () {
+      const auth = getAuth();
+      signOut(auth).then(() => {
+        this.$router.replace("/");
+      });
+    },
+  },
+};
+</script>
