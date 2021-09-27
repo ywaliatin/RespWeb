@@ -1,0 +1,62 @@
+<template>
+  <div class="hello">
+    <!-- <h1>{{ msg }}</h1> -->
+    <h3>
+      Search for friends, other mums, dads, grandparents, or carers with bub
+      based on the suburb where you live.
+    </h3>
+    <h2><span> Happy parenting, </span> <span1> happy bub!</span1></h2>
+    <h2 v-bind:style="{ color: colorName }">Happy Bubs!</h2>
+    <Login buttonlabel="Sign In" @onsubmit="login" />
+  </div>
+</template>
+<script>
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import Login from "@/views/Login.vue";
+export default {
+  name: "SignupForm",
+  components: {
+    Login,
+  },
+
+  data() {
+    return {
+      colorName: "Green",
+    };
+  },
+
+  methods: {
+    login: function (userdetails) {
+      const auth = getAuth();
+      signInWithEmailAndPassword(auth, userdetails.email, userdetails.password)
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          this.$router.replace("/dashboard");
+          console.log(user);
+        })
+        .catch((error) => {
+          console.log(error);
+          // ..
+        });
+      alert("Data Submit");
+    },
+  },
+};
+</script>
+<style scoped>
+.btn-vue {
+  background: #53b985;
+  color: #31485d;
+  font-weight: bold;
+}
+h2 span,
+enter-active {
+  color: rgb(233, 233, 63);
+  transition: opacity 2s ease;
+}
+h2 {
+  color: white;
+  transition: opacity 2s ease;
+}
+</style>
