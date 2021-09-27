@@ -1,0 +1,63 @@
+<!-- example very basic single component on Vue.js -->
+<template>
+  <div class="about">
+    <transition appear name="fade">
+      <h1>{{ name }}</h1>
+    </transition>
+    <p class="border">
+      This website was created for people with bubs who are seeking someone to
+      have a playdate with. Sometimes it is hard to find other bubs with similar
+      routines, especially sleeping and awake times and for parent or carer
+      staying home all day with bub can be lonely too. The purpose of this
+      website is to help people who look for friends with bub’s playdate, as
+      well to share each other’s experiences. People can search for friends,
+      other mums, dads, grandparents, or carers with bub based on the suburb
+      where they live, similar bub’s age and suitable available times and days.
+      That way, the playdate can happen without change to bub’s routine, so bub
+      is happy and content resulting in less stress for parents and carers.
+      People make a friend; bubs can play together. Happy parenting, happy bub!
+      <label @click="onPress">You can email us on bp@bubsplaydate.com.</label>
+    </p>
+    <button @click="show = !show">Need help?</button>
+    <transition>
+      <div v-if="show">
+        <p><a href="mailto:bp@bubsplaydate.com"> Email us </a></p>
+      </div>
+    </transition>
+  </div>
+</template>
+
+<script>
+import basicMixins from "../mixins/basic";
+export default {
+  mixins: [basicMixins],
+  data() {
+    return {
+      name: "About",
+      show: false,
+    };
+  },
+};
+</script>
+
+<style scoped>
+.about {
+  border: olivedrab;
+  box-sizing: border-box;
+  border-style: ridge;
+  width: 60%;
+  margin-left: 300px;
+}
+.fade-enter-from {
+  opacity: 0;
+}
+.fade-enter-to {
+  opacity: 0;
+}
+.fade-enter-active {
+  transition: opacity 2s ease;
+}
+.fade-leave-active {
+  transition: opacity 2s ease;
+}
+</style>
