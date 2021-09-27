@@ -1,0 +1,154 @@
+<template>
+  <div>
+    <Filter @onfilter="filterFunction" />
+    <div class="babies-container">
+      <BabyCard
+        v-for="(item, index) in filteredbabies"
+        :key="index"
+        :babydetail="item"
+      />
+    </div>
+  </div>
+</template>
+
+<script>
+import { collection, getDocs, getFirestore } from "firebase/firestore";
+import BabyCard from "@/components/BabyCard.vue";
+import { defineAsyncComponent } from "vue";
+
+const Filter = defineAsyncComponent(() =>
+  import(/*webpackChunkName:"filter"*/ "@/components/Filter.vue")
+);
+
+export default {
+  name: "Babies",
+  components: {
+    BabyCard,
+    Filter,
+  },
+  data() {
+    return {
+      babies: [],
+      db: null,
+      filters: {},
+    };
+  },
+  computed: {
+    filteredbabies: function () {
+      var filteredData = this.babies;
+
+      if (Object.keys(this.filters).length == 0) return this.babies;
+
+      if (this.filters.age) {
+        console.log("filtered by age");
+        filteredData = this.filterByAge(filteredData);
+      }
+
+      if (this.filters.gender.length > 0) {
+        console.log("filtered by gender");
+        filteredData = this.filterByGender(filteredData);
+      }
+      if (this.filters.postcode) {
+        console.log("filtered by postcode");
+        filteredData = this.filterBySuburb(filteredData);
+      }
+      if (this.filters.days.length > 0) {
+        console.log("filtered by days");
+        filteredData = this.filterByDays(filteredData);
+      }
+      if (this.filters.timeto && this.filters.timefrom) {
+        console.log("filtered by time");
+        filteredData = this.filterByTime(filteredData);
+      }
+
+      if (
+        this.filters.age &&
+        this.filters.gender.length > 0 &&
+        (this.filters.postcode || this.filters.suburb) &&
+        this.filters.timeto &&
+        this.filters.timefrom &&
+        this.filters.days.length > 0
+      ) {
+        return this.babies.filter((baby) => {
+          return (
+            baby.age == this.filters.age &&
+            this.filters.gender.indexOf(baby.gender) > -1 &&
+            (baby.suburb.toLowerCase() == this.filters.postcode.toLowerCase() ||
+              baby.postcode == this.filters.postcode) &&
+            this.filters.days.indexOf(baby.available_day.toLowerCase()) > -1 &&
+            baby.available_time >= this.timeto &&
+            baby.available_time <= this.timefrom
+          );
+        });
+      }
+
+      return filteredData;
+    },
+  },
+  mounted() {
+    this.db = getFirestore();
+    this.getBabies();
+  },
+
+  methods: {
+    getBabies: async function () {
+      const querySnapshot = await getDocs(collection(this.db, "babies"));
+      querySnapshot.forEach((doc) => {
+        this.babies.push(doc.data());
+
+        // console.log(`${doc.id} => ${doc.data()}`);
+      });
+    },
+
+    filterByAge() {
+      return this.babies.filter((baby) => baby.age == this.filters.age);
+    },
+
+    filterByGender(filteredData) {
+      return filteredData.filter(
+        (baby) => this.filters.gender.indexOf(baby.gender) > -1
+      );
+    },
+
+    filterBySuburb(filteredData) {
+      return filteredData.filter(
+        (baby) =>
+          baby.suburb.toLowerCase() == this.filters.postcode.toLowerCase() ||
+          baby.postcode == this.filters.postcode
+      );
+    },
+
+    filterByDays(filteredData) {
+      return filteredData.filter(
+        (baby) =>
+          this.filters.days.indexOf(baby.available_day.toLowerCase()) > -1
+      );
+    },
+
+    filterByTime(filteredData) {
+      console.log(filteredData);
+      return filteredData.filter(
+        (baby) =>
+          baby.available_time >= this.filters.timefrom &&
+          baby.available_time <= this.filters.timeto
+      );
+    },
+
+    filterFunction: function (filterinputs) {
+      this.filters = filterinputs;
+      console.log(filterinputs);
+    },
+  },
+};
+</script>
+
+<style scoped>
+.babies-container {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+</style>
