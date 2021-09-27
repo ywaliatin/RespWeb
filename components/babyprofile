@@ -1,0 +1,246 @@
+<template>
+  <!-- THis is going in dashboard of parent -->
+  <div class="container">
+    <form id="signup-form" v-on:submit.prevent="update">
+      <!-- v-on as event instruction for submitting the value 'update' and using prevent for set in default behaviour, 
+        means "stop the form from submitting the normal way and execute myFunction() instead"  -->
+      <div class="row">
+        <!-- profile -->
+        <div>
+          <label> First Name </label>
+          <input
+            type="text"
+            v-model.trim="firstname"
+            class="form-control"
+            placeholder="Type your first name"
+          />
+          <span v-if="errorBag.firstname">{{ errorBag.firstname }}</span>
+        </div>
+
+        <div>
+          <label> Age </label>
+          <input
+            type="number"
+            v-model.trim="age"
+            class="form-control"
+            placeholder="Type your phone number"
+            min="0"
+            max="10"
+          />
+          <span v-if="errorBag.age">{{ errorBag.age }}</span>
+        </div>
+
+        <div>
+          <label> Gender </label>
+          <input
+            type="string"
+            v-model.trim="gender"
+            class="form-control"
+            placeholder="Type your baby gender"
+            min="0"
+            max="10"
+          />
+          <span v-if="errorBag.gender">{{ errorBag.gender }}</span>
+        </div>
+
+        <div>
+          <label> Postcode </label>
+          <input
+            type="string"
+            v-model.trim="postcode"
+            class="form-control"
+            placeholder="Type your postcode"
+            min="0"
+            max="10"
+          />
+          <span v-if="errorBag.postcode">{{ errorBag.postcode }}</span>
+        </div>
+
+        <div>
+          <label> Suburb </label>
+          <input
+            type="string"
+            v-model.trim="suburb"
+            class="form-control"
+            placeholder="Type your suburb"
+            min="0"
+            max="20"
+          />
+          <span v-if="errorBag.suburb">{{ errorBag.suburb }}</span>
+        </div>
+
+        <div>
+          <label> available_day </label>
+          <input
+            type="string"
+            v-model.trim="available_day"
+            class="form-control"
+            placeholder="Type your available day"
+            min="0"
+            max="20"
+          />
+          <span v-if="errorBag.available_day">{{
+            errorBag.available_day
+          }}</span>
+        </div>
+
+        <div>
+          <label> available_time </label>
+          <input
+            type="string"
+            v-model.trim="available_time"
+            class="form-control"
+            placeholder="Type your available time"
+            min="0"
+            max="20"
+          />
+          <span v-if="errorBag.available_time">{{
+            errorBag.available_time
+          }}</span>
+        </div>
+      </div>
+
+      <button class="btn btn-vue btn-lg col-4">Update</button>
+    </form>
+  </div>
+</template>
+<script>
+import { updateDoc, doc, getFirestore } from "firebase/firestore";
+
+export default {
+  name: "Babyprofile",
+  props: {
+    baby: {
+      type: Object,
+      default: () => {},
+    },
+  },
+
+  data: function () {
+    return {
+      firstname: this.baby.name || "",
+      age: this.baby.age || "",
+      gender: this.baby.gender || "",
+      postcode: this.baby.postcode || "",
+      suburb: this.baby.suburb || "",
+      available_day: this.baby.available_day || "",
+      available_time: this.baby.available_time || "",
+      errorBag: {
+        firstname: "",
+
+        age: "",
+        gender: "",
+        postcode: "",
+        suburb: "",
+        available_day: "",
+        available_time: "",
+      },
+    };
+  },
+
+  methods: {
+    validateFields: function () {
+      var flag = true;
+
+      if (this.firstname != "" && this.age != "") {
+        this.errorBag.firstname = this.errorBag.age = "";
+        return flag;
+      } else {
+        if (this.firstname == "") {
+          flag = false;
+          this.errorBag.firstname = "Enter your baby's name";
+        }
+
+        if (this.age == "") {
+          flag = false;
+          this.errorBag.age = "Enter your baby's age";
+        }
+        if (this.gender == "") {
+          flag = false;
+          this.errorBag.gender = "Enter your baby's gender";
+        }
+        if (this.postcode == "") {
+          flag = false;
+          this.errorBag.postcode = "Enter your postcode";
+        }
+        if (this.suburb == "") {
+          flag = false;
+          this.errorBag.suburb = "Enter your suburb";
+        }
+        if (this.available_day == "") {
+          flag = false;
+          this.errorBag.available_day = "Enter your available day";
+        }
+        if (this.available_time == "") {
+          flag = false;
+          this.errorBag.available_time = "Enter your available time";
+        }
+      }
+      return flag;
+    },
+
+    update: async function () {
+      if (this.validateFields()) {
+        const docRef = doc(getFirestore(), "babies", this.baby.id);
+
+        // Set the "capital" field of the city 'DC'
+        await updateDoc(docRef, {
+          name: this.firstname,
+          age: this.age,
+          gender: this.gender,
+          postcode: this.postcode,
+          suburb: this.suburb,
+          available_day: this.available_day,
+          available_time: this.available_time,
+        });
+        alert("baby profile updated successfully");
+      }
+    },
+  },
+};
+</script>
+<style scoped>
+.btn-vue {
+  background: #119b54;
+  color: #31485d;
+  font-weight: bold;
+}
+
+.container {
+  position: relative;
+  margin: 0 auto;
+  background: #ecf0f1;
+  width: 500px;
+  border-radius: 5px;
+  box-shadow: 3px 3px 10px #333;
+  padding: 35px;
+}
+.row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+label {
+  width: 20%;
+  margin-left: 10px;
+  padding: 0px;
+  text-align: start !important;
+}
+
+input {
+  margin: 0 auto;
+  display: block;
+}
+
+#signup-form {
+  height: 200px;
+}
+</style>
+
+.container { position: relative; margin: 0 auto; background: #ecf0f1; width:
+500px; border-radius: 5px; box-shadow: 3px 3px 10px #333; padding: 35px; }
+#signup-form { height: 200px; } .form-control { width: 70%; padding: 1px; }
