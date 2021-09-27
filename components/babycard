@@ -1,0 +1,59 @@
+<template>
+  <transition name="fade">
+    <div class="card">
+      <img :src="imageurl" alt="" class="image" />
+      <div>
+        {{ babydetail.name }} <br />
+        {{ age }}
+      </div>
+      <button class="message-button">Message</button>
+    </div>
+  </transition>
+</template>
+
+<script>
+export default {
+  name: "BabyCard",
+  props: {
+    babydetail: Object,
+  },
+  computed: {
+    age: function () {
+      if (this.babydetail.age * 12 <= 18) {
+        return this.babydetail.age * 12 + " months";
+      } else {
+        return this.babydetail.age + " years";
+      }
+    },
+  },
+  data() {
+    return {
+      imageurl: this.babydetail.image
+        ? require("@/assets/babyimages/" + this.babydetail.image)
+        : "",
+    };
+  },
+};
+</script>
+
+<style>
+.image {
+  width: 200px !important;
+  height: 200px !important;
+  object-fit: contain !important;
+}
+.message-button {
+  width: 100%;
+  background: #119b54;
+  color: white;
+  padding: 4px;
+  font-weight: 900;
+}
+.card {
+  margin-right: 10px;
+  border: 1px solid #ccc;
+}
+/* .fade-beforeenter .fade-enter .fade-leave{
+    opacity:0;
+} */
+</style>
