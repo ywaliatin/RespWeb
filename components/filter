@@ -1,0 +1,158 @@
+<template>
+  <div class="form-container">
+    <h3>Find Babies</h3>
+    <!-- in built event handling. submit is inbuilt event -->
+    <form @submit.prevent="passFilters" class="filter-form">
+      <div class="form-group">
+        <label for="Age">Age in years</label>
+        <input type="number" name="age" v-model="age" />
+      </div>
+      <div class="form-group">
+        <label for="gender">Gender</label>
+        <input
+          type="checkbox"
+          name="gender"
+          v-model="gender"
+          value="male"
+        />Male
+        <input
+          type="checkbox"
+          name="gender"
+          v-model="gender"
+          value="female"
+        />Female
+      </div>
+      <div class="form-group">
+        <label for="postcode">Postcode / Suburb</label>
+        <input type="text" name="postcode" v-model="postcode" />
+      </div>
+      <div class="form-group availability">
+        <div>
+          <label for="availability">Availability</label>
+          <input
+            type="checkbox"
+            name="days"
+            v-model="days"
+            value="monday"
+          />Monday
+          <input
+            type="checkbox"
+            name="days"
+            v-model="days"
+            value="tuesday"
+          />Tuesday
+          <input
+            type="checkbox"
+            name="days"
+            v-model="days"
+            value="wednesday"
+          />Wednesday
+          <input
+            type="checkbox"
+            name="days"
+            v-model="days"
+            value="thursday"
+          />Thursday
+          <input
+            type="checkbox"
+            name="days"
+            v-model="days"
+            value="friday"
+          />Friday
+          <input
+            type="checkbox"
+            name="days"
+            v-model="days"
+            value="saturday"
+          />Saturday
+          <input
+            type="checkbox"
+            name="days"
+            v-model="days"
+            value="sunday"
+          />Sunday
+        </div>
+
+        <br />
+        <div>
+          <label for="time">Time From</label>
+
+          <Time v-model="timefrom"></Time>
+
+          <label for="time">Time To</label>
+          <Time v-model="timeto" />
+        </div>
+      </div>
+
+      <div class="text-center form-group">
+        <button type="submit" class="filter-btn">Filter</button>
+      </div>
+    </form>
+  </div>
+</template>
+
+<script>
+import Time from "./Time.vue";
+export default {
+  name: "filter",
+  components: {
+    Time,
+  },
+  data() {
+    return {
+      gender: [],
+      age: null,
+      postcode: "",
+      days: [],
+      timefrom: "",
+      timeto: "",
+    };
+  },
+  methods: {
+    passFilters: function () {
+      var filterinputs = {
+        gender: this.gender,
+        age: this.age,
+        postcode: this.postcode,
+        days: this.days,
+        timefrom: this.timefrom,
+        timeto: this.timeto,
+      };
+
+      this.$emit("onfilter", filterinputs);
+    },
+  },
+};
+</script>
+<style scoped>
+.filter-form {
+  display: flex;
+  flex-wrap: wrap;
+}
+.form-group {
+  width: 30%;
+}
+.form-group > label {
+  margin-right: 2%;
+}
+.availability {
+  display: block;
+  width: 100% !important;
+  margin-top: 2%;
+}
+.filter-btn {
+  border: none;
+  padding: 0.4%;
+  background: #119b54;
+  color: white;
+  text-align: center;
+  width: 200px;
+  margin: 1%;
+  color: #31485d;
+  font-weight: bold;
+}
+.text-center {
+  width: 100% !important;
+  text-align: center;
+}
+</style>
